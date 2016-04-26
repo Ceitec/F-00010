@@ -364,74 +364,9 @@ int main(void)
 				GLCD_WriteString("+24V-RJ:    ");
 				sprintf(Vystup,"%+6.2fV", Convert);
 				GLCD_WriteString(Vystup);
-	
+		
 				MereniADC = 0;
 			}
 		}
 	}
 }
-
-/*
-if (VymazaniDisplay > 5)
-{
-	GLCD_ClearText(); // Clear text area
-	GLCD_ClearCG(); // Clear character generator area
-	GLCD_ClearGraphic(); // Clear graphic area
-	GLCD_TextGoTo(5,T6963_CURSOR_1_LINE);// set text coordinates
-	GLCD_WriteString("AtomTrace - Sci-Trace"); // write text
-	
-	GLCD_TextGoTo(0,T6963_CURSOR_3_LINE);// set text coordinates
-	GLCD_WriteString("Bus-A:"); // write text
-	
-	GLCD_TextGoTo(0,T6963_CURSOR_4_LINE);// set text coordinates
-	GLCD_WriteString("Bus-B:"); // write text
-	
-	GLCD_TextGoTo(0,T6963_CURSOR_5_LINE);// set text coordinates
-	GLCD_WriteString("USB:"); // write text
-	
-	GLCD_TextGoTo(0,T6963_CURSOR_6_LINE);// set text coordinates
-	GLCD_WriteString("+5V:"); // write text
-	
-	GLCD_TextGoTo(0,T6963_CURSOR_7_LINE);// set text coordinates
-	GLCD_WriteString("+12V:"); // write text
-	
-	GLCD_TextGoTo(0,T6963_CURSOR_8_LINE);// set text coordinates
-	GLCD_WriteString("-12V:"); // write text
-	
-	GLCD_TextGoTo(0,T6963_CURSOR_9_LINE);// set text coordinates
-	GLCD_WriteString("+24V-BP:"); // write text
-	
-	GLCD_TextGoTo(0,T6963_CURSOR_10_LINE);// set text coordinates
-	GLCD_WriteString("+24V-RJ:"); // write text
-	VymazaniDisplay = 0;
-}*/
-/*
-
-GLCD_TextGoTo(5,T6963_CURSOR_1_LINE);// set text coordinates
-GLCD_WriteString("AtomTrace - Sci-Trace"); // write text
-
-GLCD_TextGoTo(0,T6963_CURSOR_3_LINE);// set text coordinates
-GLCD_WriteString("Bus-A:"); // write text
-
-GLCD_TextGoTo(0,T6963_CURSOR_4_LINE);// set text coordinates
-GLCD_WriteString("Bus-B:"); // write text
-
-GLCD_TextGoTo(0,T6963_CURSOR_5_LINE);// set text coordinates
-GLCD_WriteString("USB:"); // write text
-
-GLCD_TextGoTo(0,T6963_CURSOR_6_LINE);// set text coordinates
-GLCD_WriteString("+5V:"); // write text
-
-GLCD_TextGoTo(0,T6963_CURSOR_7_LINE);// set text coordinates
-GLCD_WriteString("+12V:"); // write text
-
-GLCD_TextGoTo(0,T6963_CURSOR_8_LINE);// set text coordinates
-GLCD_WriteString("-12V:"); // write text
-
-GLCD_TextGoTo(0,T6963_CURSOR_9_LINE);// set text coordinates
-GLCD_WriteString("+24V-BP:"); // write text
-
-GLCD_TextGoTo(0,T6963_CURSOR_10_LINE);// set text coordinates
-GLCD_WriteString("+24V-RJ:"); // write text
-
-*/
