@@ -39,6 +39,7 @@ SUBDIRS :=  \
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
 ../inc/adc.c \
+../inc/AtomTrace.c \
 ../inc/graphic.c \
 ../inc/module_ZM.c \
 ../inc/packet_processor.c \
@@ -58,6 +59,7 @@ ASM_SRCS +=
 
 OBJS +=  \
 inc/adc.o \
+inc/AtomTrace.o \
 inc/graphic.o \
 inc/module_ZM.o \
 inc/packet_processor.o \
@@ -70,6 +72,7 @@ main.o
 
 OBJS_AS_ARGS +=  \
 inc/adc.o \
+inc/AtomTrace.o \
 inc/graphic.o \
 inc/module_ZM.o \
 inc/packet_processor.o \
@@ -82,6 +85,7 @@ main.o
 
 C_DEPS +=  \
 inc/adc.d \
+inc/AtomTrace.d \
 inc/graphic.d \
 inc/module_ZM.d \
 inc/packet_processor.d \
@@ -94,6 +98,7 @@ main.d
 
 C_DEPS_AS_ARGS +=  \
 inc/adc.d \
+inc/AtomTrace.d \
 inc/graphic.d \
 inc/module_ZM.d \
 inc/packet_processor.d \
@@ -118,6 +123,8 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
 
 
 
@@ -178,7 +185,7 @@ all: $(OUTPUT_FILE_PATH) $(ADDITIONAL_DEPENDENCIES)
 $(OUTPUT_FILE_PATH): $(OBJS) $(USER_OBJS) $(OUTPUT_FILE_DEP) $(LIB_DEP) $(LINKER_SCRIPT_DEP)
 	@echo Building target: $@
 	@echo Invoking: AVR/GNU Linker : 4.9.2
-	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE) -o$(OUTPUT_FILE_PATH_AS_ARGS) $(OBJS_AS_ARGS) $(USER_OBJS) $(LIBS) -Wl,-Map="RidiciJednotka.map" -Wl,--start-group -Wl,-lm  -Wl,--end-group -Wl,--gc-sections -mmcu=atmega644p -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\Atmel\ATmega_DFP\1.0.98\gcc\dev\atmega644p"  
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE) -o$(OUTPUT_FILE_PATH_AS_ARGS) $(OBJS_AS_ARGS) $(USER_OBJS) $(LIBS) -Wl,-Map="RidiciJednotka.map" -Wl,-u,vfprintf -Wl,--start-group -Wl,-lm -Wl,-lprintf_flt  -Wl,--end-group -Wl,--gc-sections -mmcu=atmega644p -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\Atmel\ATmega_DFP\1.0.98\gcc\dev\atmega644p"  
 	@echo Finished building target: $@
 	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-objcopy.exe" -O ihex -R .eeprom -R .fuse -R .lock -R .signature -R .user_signatures  "RidiciJednotka.elf" "RidiciJednotka.hex"
 	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-objcopy.exe" -j .eeprom  --set-section-flags=.eeprom=alloc,load --change-section-lma .eeprom=0  --no-change-warnings -O ihex "RidiciJednotka.elf" "RidiciJednotka.eep" || exit 0
