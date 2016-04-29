@@ -270,45 +270,18 @@ GLCD_SetAddressPointer(address);
 //-------------------------------------------------------------------------------------------------
 void GLCD_Bitmap(unsigned char * bitmap, unsigned char x, unsigned char y, unsigned char width, unsigned char height)
 {
-	unsigned char i, j;
+unsigned char i, j;
 
-	for(j = 0; j < height; j++)
-	{
-		GLCD_GraphicGoTo(x, y + j);
-		for(i = 0; i < width/GLCD_FONT_WIDTH; i++)
-		{
-			GLCD_WriteDisplayData(pgm_read_byte(bitmap + i + (GLCD_GRAPHIC_AREA * j))); 	
-		}
-	}
-}
-void GLCD_Image(unsigned char * bitmap, unsigned char x, unsigned char y, unsigned char width, unsigned char height)
+for(j = 0; j < height; j++)
 {
-	unsigned char i, j, bajt;
-	unsigned char Row;
+GLCD_GraphicGoTo(x, y + j);
+for(i = 0; i < width/GLCD_FONT_WIDTH; i++)
+  {
+  GLCD_WriteDisplayData(pgm_read_byte(bitmap + i + (GLCD_GRAPHIC_AREA * j))); 	
+  }
+}
+}
 
-	for(j = 0; j < height; j++)
-	{
-		for(i = 0; i < width; i++)
-		{
-			for(bajt = 0; bajt < 9; bajt++)
-			{
-				Row = *bitmap;
-				if ((Row && 0x80) == 0x80)
-				{
-					GLCD_SetPixel(x + j + bajt, y + i, 1);
-				}
-				else
-				{
-					GLCD_SetPixel(x + j + bajt, y + i, 0);
-				}
-				
-				Row = Row << 1;
-			}
-			bitmap++;
-		}
-	}
-}	
- 	
 //-------------------------------------------------------------------------------------------------
 //
 // Display initalization

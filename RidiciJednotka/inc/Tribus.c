@@ -8,6 +8,7 @@
 //#include <stdint.h>
 #include "Tribus_types.h"
 #include "Tribus.h"
+#include "adc.h"
 
 
 /******************************************************/

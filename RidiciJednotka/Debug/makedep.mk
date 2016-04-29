@@ -4,8 +4,6 @@
 
 inc\adc.c
 
-inc\AtomTrace.c
-
 inc\graphic.c
 
 inc\module_ZM.c

@@ -39,7 +39,6 @@ SUBDIRS :=  \
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
 ../inc/adc.c \
-../inc/AtomTrace.c \
 ../inc/graphic.c \
 ../inc/module_ZM.c \
 ../inc/packet_processor.c \
@@ -59,7 +58,6 @@ ASM_SRCS +=
 
 OBJS +=  \
 inc/adc.o \
-inc/AtomTrace.o \
 inc/graphic.o \
 inc/module_ZM.o \
 inc/packet_processor.o \
@@ -72,7 +70,6 @@ main.o
 
 OBJS_AS_ARGS +=  \
 inc/adc.o \
-inc/AtomTrace.o \
 inc/graphic.o \
 inc/module_ZM.o \
 inc/packet_processor.o \
@@ -85,7 +82,6 @@ main.o
 
 C_DEPS +=  \
 inc/adc.d \
-inc/AtomTrace.d \
 inc/graphic.d \
 inc/module_ZM.d \
 inc/packet_processor.d \
@@ -98,7 +94,6 @@ main.d
 
 C_DEPS_AS_ARGS +=  \
 inc/adc.d \
-inc/AtomTrace.d \
 inc/graphic.d \
 inc/module_ZM.d \
 inc/packet_processor.d \
@@ -123,8 +118,6 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
-
-
 
 
 

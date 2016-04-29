@@ -116,9 +116,6 @@
     <Compile Include="inc\adc.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="inc\AtomTrace.c">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="inc\common_defs.h">
       <SubType>compile</SubType>
     </Compile>
