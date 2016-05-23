@@ -29,14 +29,19 @@ typedef unsigned long dword;
 #define u08 byte
 #define u16 word
 
-#define 	sbi(port, bit)   (port) |= (1 << (bit))
-#define 	cbi(port, bit)   (port) &= ~(1 << (bit))
+#define 	sbi(port, bit)	(port) |= (1 << (bit))
+#define 	cbi(port, bit)	(port) &= ~(1 << (bit))
+#define		rbi(pin, bit)	(pin) & (1 << (bit)) // call with PINx and bit#
 
 #define true 1
 #define false 0
 
 #define TRUE 1
 #define FALSE 0
+
+//Bootloader sekce
+#define BOOT_PORT	PORTD
+#define BOOT_PIN	PD5
 
 
 #endif

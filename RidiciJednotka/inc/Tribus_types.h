@@ -37,7 +37,7 @@
 #define TB_CMD_SCO     30
 #define TB_CMD_GCO     31
 #define TB_CMD_CCO     32
-#define TEST			33
+#define TB_BOOTLOADER  255
 
 // error codes
 #define TB_ERR_OK           100

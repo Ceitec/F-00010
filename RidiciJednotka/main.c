@@ -31,7 +31,7 @@
 #include <string.h>
 #include <math.h>
 #include <stdio.h>
-
+#include "inc/DS18B20.h"
 
 volatile byte timer0_flag = 0; // T = 10ms
 
@@ -39,6 +39,9 @@ byte Dtime = 0;
 Ttripac CheckModules;  // buffer
 uint8_t Back=0;
 extern uint8_t Pocet;
+
+byte rom0[9] = {};
+
 
 //----------------------------------------------------------
 ISR(TIMER0_COMPA_vect) {
@@ -54,42 +57,6 @@ ISR(TIMER0_COMPB_vect) {
 ISR(TIMER0_OVF_vect) {
   // T = 10ms
   timer0_flag = true;
-}
-
-
-uint8_t try_receive_data(void)
-{
-	//byte i;
-	//byte *ptr;
-	//TB_SendAck(100, uart1_flags.data_received);
-	/*if (!uart1_flags.data_received)
-	{
-		Pocet = 4;
-		ptr = uart1_get_data_begin();
-		for (i=0; i<9; i++)
-		{
-			Pocet = 5;
-			TB_bufIn[i] = *ptr;
-			ptr++;
-		}
-		uart1_get_data_end();
-		uart1_flags.data_received = FALSE;
-		if (TB_Read() == 0)
-		{
-			Pocet = 6;
-			switch (TB_Decode())
-			{
-				Pocet = 7;
-				case TB_CMD_GGP:
-				switch (TB_bufIn[TB_BUF_TYPE])
-				{
-					return 1;
-				}
-				break;
-			}
-		}
-	}*/
-	return 0;
 }
 
 //----------------------------------------------------------
@@ -110,7 +77,9 @@ void init(void)
 
   //DDRB = BV(PB0);
   DDRD = BV(PD1) | BV(PD3) | BV(PD4);
-
+	//Nastavení Resetu pro Moduly (Nastavení do log.1)
+	sbi(BOOT_PORT, BOOT_PIN);
+	
   uart0_init(); // PC
   uart1_init(); // internal
   adc_init();
@@ -122,16 +91,31 @@ void init(void)
   sei();
 }
 
+void RomReaderProgram()
+// Read the ID of the attached Dallas 18B20 device
+// Note: only ONE device should be on the bus.
+{
+	// write 64-bit ROM code on first LCD line
+	therm_Reset();
+	therm_WriteByte(THERM_READROM);
+	for (byte i=0; i<8; i++)
+	{
+		byte data = therm_ReadByte();
+		rom0[i] = data;
+	}
+}
 
 //----------------------------------------------------------
 int main(void)
 {
 	init();
 	
-	char Vystup[20];
+	char Vystup[24];
 	uint8_t MereniADC=0;
 	float Convert=0;
 	uint8_t PosunX=0, PosunY=0;
+	int Cele = 0, Deset = 0, Znamenko = 0;
+	
 	
 	GLCD_Initalize(); // Initalize LCD
 	
@@ -166,6 +150,13 @@ int main(void)
 	PosunX = 5;
 	PosunY = 2;
 
+	RomReaderProgram();
+	/*if (RomReaderProgram())
+	{
+		
+	}*/
+	
+	
 	while(1)
 	{ // mail loop
 		pp_loop();
@@ -212,7 +203,7 @@ int main(void)
 				GLCD_WriteString("AtomTrace - Sci-Trace"); // write text
 				
 				// Bus-A
-				memset(Vystup, 0, 12);
+				memset(Vystup, 0, 24);
 				Convert = (adc_read(6) * 7.65f / 1000.0f);
 				GLCD_TextGoTo(0 + PosunX, T6963_CURSOR_3_LINE + PosunY);
 				GLCD_WriteString("Bus-A:      ");
@@ -220,7 +211,7 @@ int main(void)
 				GLCD_WriteString(Vystup);
 				
 				// Bus-B
-				memset(Vystup, 0, 12);
+				memset(Vystup, 0, 24);
 				Convert = (adc_read(5) * 7.65f / 1000.0f);
 				GLCD_TextGoTo(0 + PosunX, T6963_CURSOR_4_LINE + PosunY);
 				GLCD_WriteString("Bus-B:      ");
@@ -228,7 +219,7 @@ int main(void)
 				GLCD_WriteString(Vystup);
 				
 				// USB
-				memset(Vystup, 0, 12);
+				memset(Vystup, 0, 24);
 				Convert = (adc_read(7) * 7.65f / 1000.0f);
 				GLCD_TextGoTo(0 + PosunX, T6963_CURSOR_5_LINE + PosunY);
 				GLCD_WriteString("USB:        ");
@@ -242,56 +233,59 @@ int main(void)
 				}
 				
 				// +5V
-				memset(Vystup, 0, 12);
+				memset(Vystup, 0, 24);
 				Convert = (adc_read(4) * 7.65f / 1000.0f);
+				snprintf(Vystup, 8,"%+6.2fV", Convert);
 				GLCD_TextGoTo(0 + PosunX, T6963_CURSOR_6_LINE + PosunY);
 				GLCD_WriteString("+5V:        ");
-				sprintf(Vystup,"%+6.2fV", Convert);
 				GLCD_WriteString(Vystup);
 				
 				// +12V
-				memset(Vystup, 0, 12);
+				memset(Vystup, 0, 24);
 				Convert = (adc_read(2) * 10.80f / 1000.0f);
+				//sprintf(Vystup,"+12V:       %+6.2fV", Convert);
+				snprintf(Vystup, 8,"%+6.2fV", Convert);
 				GLCD_TextGoTo(0 + PosunX, T6963_CURSOR_7_LINE + PosunY);
 				GLCD_WriteString("+12V:       ");
-				sprintf(Vystup,"%+6.2fV", Convert);
 				GLCD_WriteString(Vystup);
 				
 				// -12V - 2,01V
-				memset(Vystup, 0, 12);
+				memset(Vystup, 0, 24);
 				Convert = (adc_read(3) * -12.93f / 1000.0f);
+				//sprintf(Vystup,"-12V:       %+6.2fV", Convert);
+				snprintf(Vystup, 8,"%+6.2fV", Convert);
 				GLCD_TextGoTo(0 + PosunX, T6963_CURSOR_8_LINE + PosunY);
-				GLCD_WriteString("-12V:");
-				GLCD_TextGoTo(12 + PosunX, T6963_CURSOR_8_LINE + PosunY);
-				sprintf(Vystup,"%+6.2fV", Convert);
+				GLCD_WriteString("-12V:       ");
 				GLCD_WriteString(Vystup);
 
 				// +24V - BP
-				memset(Vystup, 0, 12);
+				memset(Vystup, 0, 24);
 				Convert = (adc_read(1) * 31.52f / 1000.0f);
+				sprintf(Vystup,"+24V-BP:    %+6.2fV", Convert);
 				GLCD_TextGoTo(0 + PosunX, T6963_CURSOR_9_LINE + PosunY);
-				GLCD_WriteString("+24V-BP:    ");
-				sprintf(Vystup,"%+6.2fV", Convert);
 				GLCD_WriteString(Vystup);
 				
 				// +24V - RJ
-				memset(Vystup, 0, 12);
+				memset(Vystup, 0, 24);
 				Convert = (adc_read(0) * 31.52f / 1000.0f);
+				sprintf(Vystup,"+24V-RJ:    %+6.2fV", Convert);
 				GLCD_TextGoTo(0 + PosunX, T6963_CURSOR_10_LINE + PosunY);
-				GLCD_WriteString("+24V-RJ:    ");
-				sprintf(Vystup,"%+6.2fV", Convert);
 				GLCD_WriteString(Vystup);
-
-// 				Hodnota = (adc_read(7) * 7.95);
-// 				if (Hodnota > 4700)
-// 				{
-// 					
-// 				}
-//  				else
-//  				{
-// 					 GLCD_TextGoTo(10, T6963_CURSOR_5_LINE);// set text coordinates
-// 					GLCD_WriteString("N.C.   ");
-//  				}
+			
+				memset(Vystup, 0, 24);
+				GLCD_TextGoTo(0 + PosunX, T6963_CURSOR_12_LINE + PosunY);
+				therm_ReadTempCTry(rom0, &Cele, &Deset, &Znamenko);
+				if(Znamenko)
+				{
+					sprintf(Vystup, "Teplota:    -%2i.%2.2i°C", Cele, Deset);	
+				}
+				else
+				{
+					sprintf(Vystup, "Teplota:    +%2i.%2.2i°C", Cele, Deset);
+				}
+				
+				GLCD_WriteString(Vystup);
+				
 				
 				
 				MereniADC = 0;
@@ -299,68 +293,3 @@ int main(void)
 		}
 	}
 }
-
-/*
-if (VymazaniDisplay > 5)
-{
-	GLCD_ClearText(); // Clear text area
-	GLCD_ClearCG(); // Clear character generator area
-	GLCD_ClearGraphic(); // Clear graphic area
-	GLCD_TextGoTo(5,T6963_CURSOR_1_LINE);// set text coordinates
-	GLCD_WriteString("AtomTrace - Sci-Trace"); // write text
-	
-	GLCD_TextGoTo(0,T6963_CURSOR_3_LINE);// set text coordinates
-	GLCD_WriteString("Bus-A:"); // write text
-	
-	GLCD_TextGoTo(0,T6963_CURSOR_4_LINE);// set text coordinates
-	GLCD_WriteString("Bus-B:"); // write text
-	
-	GLCD_TextGoTo(0,T6963_CURSOR_5_LINE);// set text coordinates
-	GLCD_WriteString("USB:"); // write text
-	
-	GLCD_TextGoTo(0,T6963_CURSOR_6_LINE);// set text coordinates
-	GLCD_WriteString("+5V:"); // write text
-	
-	GLCD_TextGoTo(0,T6963_CURSOR_7_LINE);// set text coordinates
-	GLCD_WriteString("+12V:"); // write text
-	
-	GLCD_TextGoTo(0,T6963_CURSOR_8_LINE);// set text coordinates
-	GLCD_WriteString("-12V:"); // write text
-	
-	GLCD_TextGoTo(0,T6963_CURSOR_9_LINE);// set text coordinates
-	GLCD_WriteString("+24V-BP:"); // write text
-	
-	GLCD_TextGoTo(0,T6963_CURSOR_10_LINE);// set text coordinates
-	GLCD_WriteString("+24V-RJ:"); // write text
-	VymazaniDisplay = 0;
-}*/
-/*
-
-GLCD_TextGoTo(5,T6963_CURSOR_1_LINE);// set text coordinates
-GLCD_WriteString("AtomTrace - Sci-Trace"); // write text
-
-GLCD_TextGoTo(0,T6963_CURSOR_3_LINE);// set text coordinates
-GLCD_WriteString("Bus-A:"); // write text
-
-GLCD_TextGoTo(0,T6963_CURSOR_4_LINE);// set text coordinates
-GLCD_WriteString("Bus-B:"); // write text
-
-GLCD_TextGoTo(0,T6963_CURSOR_5_LINE);// set text coordinates
-GLCD_WriteString("USB:"); // write text
-
-GLCD_TextGoTo(0,T6963_CURSOR_6_LINE);// set text coordinates
-GLCD_WriteString("+5V:"); // write text
-
-GLCD_TextGoTo(0,T6963_CURSOR_7_LINE);// set text coordinates
-GLCD_WriteString("+12V:"); // write text
-
-GLCD_TextGoTo(0,T6963_CURSOR_8_LINE);// set text coordinates
-GLCD_WriteString("-12V:"); // write text
-
-GLCD_TextGoTo(0,T6963_CURSOR_9_LINE);// set text coordinates
-GLCD_WriteString("+24V-BP:"); // write text
-
-GLCD_TextGoTo(0,T6963_CURSOR_10_LINE);// set text coordinates
-GLCD_WriteString("+24V-RJ:"); // write text
-
-*/

@@ -4,6 +4,8 @@
 
 inc\adc.c
 
+inc\DS18B20.c
+
 inc\graphic.c
 
 inc\module_ZM.c

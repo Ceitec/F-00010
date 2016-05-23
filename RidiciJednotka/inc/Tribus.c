@@ -9,7 +9,7 @@
 #include "Tribus_types.h"
 #include "Tribus.h"
 #include "adc.h"
-
+#include <util/delay.h>
 
 /******************************************************/
 //variables
@@ -75,7 +75,7 @@ void TB_Init(void * setting_in_eeprom)
   if (TB_gbparam.eemagic != 66) {
     // not valid data in eeprom
     TB_gbparam.eemagic = 66;
-    TB_gbparam.baud = 4;
+    TB_gbparam.baud = 7;
     TB_gbparam.address = 1;
     TB_gbparam.telegram_pause_time = 0;
     TB_gbparam.host_address = 2;
@@ -324,9 +324,11 @@ byte TB_Decode(void)
         TB_SendAck(TB_ERR_OK, (0x10203040));
       };
       break;
-	case TEST: // Command 33.
-		TB_SendAck(TB_ERR_OK, adc_read(7));
-		
+	case TB_BOOTLOADER: // Command 255.
+ 		cbi(BOOT_PORT, BOOT_PIN);
+		_delay_us(1);
+		sbi(BOOT_PORT, BOOT_PIN);
+		TB_SendAck(100, TB_BOOTLOADER);
 		break;
     default:
       TB_SendAck(TB_ERR_COMMAND, 0); // invalid command

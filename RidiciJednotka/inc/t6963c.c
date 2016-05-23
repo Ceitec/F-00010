@@ -165,7 +165,7 @@ void GLCD_WriteChar(char charCode)
 //-------------------------------------------------------------------------------------------------
 void GLCD_WriteString(char * string)
 {
-	while(*string)
+	while(*string > 0)
 	{
 		GLCD_WriteChar(*string++);
 	}
