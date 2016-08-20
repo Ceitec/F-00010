@@ -307,28 +307,39 @@ byte TB_Decode(void)
       }
       break;
     case 136: // get module version
-      if (TB_bufIn[TB_BUF_TYPE] == 0) {
-        // text mode
-        TB_bufOut[0] = TB_AddrReply;
-        TB_bufOut[1] = '1';
-        TB_bufOut[2] = '0';
-        TB_bufOut[3] = '2';
-        TB_bufOut[4] = '1';
-        TB_bufOut[5] = 'V';
-        TB_bufOut[6] = '1';
-        TB_bufOut[7] = '2';
-        TB_bufOut[8] = '0';
-        TB_Send();
-       } else {
-        // binary mode
-        TB_SendAck(TB_ERR_OK, (0x10203040));
-      };
-      break;
-	case TB_BOOTLOADER: // Command 255.
- 		cbi(BOOT_PORT, BOOT_PIN);
-		_delay_us(1);
+		if (TB_bufIn[TB_BUF_TYPE] == 0)
+		{
+			// text mode
+			TB_bufOut[0] = TB_AddrReply;
+			TB_bufOut[1] = '1';
+			TB_bufOut[2] = '0';
+			TB_bufOut[3] = '2';
+			TB_bufOut[4] = '1';
+			TB_bufOut[5] = 'V';
+			TB_bufOut[6] = '1';
+			TB_bufOut[7] = '2';
+			TB_bufOut[8] = '0';
+			TB_Send();
+		}
+		else
+		{
+			// binary mode
+			TB_SendAck(TB_ERR_OK, (0x10203040));
+		}
+		break;
+	case 0x50: // Command 80.
+		cbi(BOOT_PORT, BOOT_PIN);
+		TB_SendAck(100, 0);
+		break;
+	case 0x51: // Command 81.
 		sbi(BOOT_PORT, BOOT_PIN);
-		TB_SendAck(100, TB_BOOTLOADER);
+		TB_SendAck(100, 1);
+		break;
+	case TB_BOOTLOADER: // Command 255.
+ 		TB_SendAck(100, TB_BOOTLOADER);
+		cbi(BOOT_PORT, BOOT_PIN);
+		_delay_us(10);
+		sbi(BOOT_PORT, BOOT_PIN);
 		break;
     default:
       TB_SendAck(TB_ERR_COMMAND, 0); // invalid command

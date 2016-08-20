@@ -349,20 +349,31 @@ void uart1_process(void)
 // timer function
 void uart1_ISR_timer(void)
 {
-  // pauza za odeslanými daty (nepøišla odpovìï)
-  if (uart1_flags.wait_tx) {
-    uart1_tx_timeout--;
-    if (uart1_tx_timeout == 0) {
-      uart1_flags.wait_tx = FALSE;
-    }
-  }
+	static byte uart1_rx_timeout_flag = 0;
+	// pauza za odeslanými daty (nepøišla odpovìï)
+	if (uart1_flags.wait_tx)
+	{
+		uart1_tx_timeout--;
+		if (uart1_tx_timeout == 0)
+		{
+			uart1_flags.wait_tx = FALSE;
+		}
+	}
 
-  // smazání náhodnì pøijatých dat
-  if (uart1_rx_timeout > 0) {
-    uart1_rx_timeout--;
-    } else {
-    uart1_buf_rx_ptr_b = uart1_buf_rx_ptr_e;
-  }
+	// smazání náhodnì pøijatých dat
+	if (uart1_rx_timeout > 0)
+	{
+		uart1_rx_timeout--;
+		uart1_rx_timeout_flag = FALSE;
+	}
+	else
+	{
+		if (!uart1_rx_timeout_flag)
+		{
+			uart1_buf_rx_ptr_b = uart1_buf_rx_ptr_e;
+			uart1_rx_timeout_flag = TRUE;	
+		}
+	}
 }
 
 //----------------------------------------------------------

@@ -303,16 +303,20 @@ void uart0_ISR_timer(void)
 {
   static byte uart0_rx_timeout_flag = 0;
   
-  // smazání náhodnì pøijatých dat (RX timeout)
-  if (uart0_rx_timeout > 0) {
-    uart0_rx_timeout--;
-    uart0_rx_timeout_flag = false;
-    } else {
-    if (!uart0_rx_timeout_flag) {
-      uart0_buf_rx_ptr_b = uart0_buf_rx_ptr_e;
-      uart0_rx_timeout_flag = true;
-    }
-  }
+	// smazání náhodnì pøijatých dat (RX timeout)
+	if (uart0_rx_timeout > 0)
+	{
+		uart0_rx_timeout--;
+		uart0_rx_timeout_flag = false;
+	}
+	else
+	{
+		if (!uart0_rx_timeout_flag)
+		{
+			uart0_buf_rx_ptr_b = uart0_buf_rx_ptr_e;
+			uart0_rx_timeout_flag = true;
+		}
+	}
 }
 
 //----------------------------------------------------------

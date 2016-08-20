@@ -71,13 +71,29 @@ void process_timer_100Hz(void)
   }
 }
 
+void Blik(void)
+{
+	sbi(PORTC, PC1);
+	_delay_us(1);
+	cbi(PORTC, PC1);
+	_delay_us(1);
+}
+
 //----------------------------------------------------------
 void init(void)
 {
 
-  //DDRB = BV(PB0);
-  DDRD = BV(PD1) | BV(PD3) | BV(PD4);
+	//DDRB = BV(PB0);
+	DDRD = BV(PD1) | BV(PD3) | BV(PD4) | BV(BOOT_PIN);
+	
+	//Nastavení testovacích 
+	DDRC |= BV(PC0) | BV(PC1);
+	
+	
+	
 	//Nastavení Resetu pro Moduly (Nastavení do log.1)
+	cbi(BOOT_PORT, BOOT_PIN);
+	_delay_us(10);
 	sbi(BOOT_PORT, BOOT_PIN);
 	
   uart0_init(); // PC
@@ -164,6 +180,10 @@ int main(void)
 		uart0_process();
 		uart1_process();
 		
+		Blik();
+		
+		//Tohle do Chamonix musím zapnout
+		/*
 		if(timer0_flag)
 		{
 			
@@ -198,6 +218,8 @@ int main(void)
 				
 				//Vymazani Duchù z Displaye
 				GLCD_ClearGraphic(); // Clear graphic area
+// 				GLCD_TextGoTo(5,T6963_CURSOR_1_LINE);// set text coordinates
+// 				GLCD_WriteString("  Zkusebni firmware  "); // write text
 				
 				GLCD_TextGoTo(5,T6963_CURSOR_1_LINE);// set text coordinates
 				GLCD_WriteString("AtomTrace - Sci-Trace"); // write text
@@ -290,6 +312,6 @@ int main(void)
 				
 				MereniADC = 0;
 			}
-		}
+		}*/
 	}
 }

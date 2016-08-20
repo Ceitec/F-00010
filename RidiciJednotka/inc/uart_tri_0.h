@@ -4,8 +4,8 @@
 //#include <stdbool.h>
 #include "uart_types.h"
 
-#define UART0_BUFFER_LINEAR_SIZE (0x80)
-#define UART0_BUFFER_PACKET_SIZE (0x20)
+#define UART0_BUFFER_LINEAR_SIZE (0x20)
+#define UART0_BUFFER_PACKET_SIZE (0x10)
 #define UART0_TIMEOUT (5)
 #define UART0_DEFAULT_BAUD 115200
 //#define UART0_DEFAULT_BAUD 230400
